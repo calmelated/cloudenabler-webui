@@ -11,6 +11,6 @@ Source code of CloudEnabler Web management
  - Build Angular2 code for production use (AoT), the code will be placed at `dist` directory if there is no error. 
 
 # Demo
- ![demo]()
+ ![demo](https://github.com/calmelated/cloudenabler-webui/blob/master/demo-1280.png?raw=true)
 
  
