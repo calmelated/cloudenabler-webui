@@ -1,0 +1,104 @@
+<div class="skin-blue sidebar-mini" [class.sidebar-collapse]="header['collspse']" [class.sidebar-open]="header['collspse']">
+  <div id="wrapper" class="wrapper" style="height:100vh;overflow:auto;">
+    <layout-header [header]="header"></layout-header>
+
+    <div class="content-wrapper">
+      <section class="content">
+        <div class="box box-primary">
+
+          <div class="row title">
+            <div class="col-md-12">
+              <h4>{{ 'smtp_config' | translate }}</h4>
+            </div>
+          </div>
+
+          <div class="row row-content break-all" (click)="openModalEdit('SMTP_HOST')">
+            <div class="col-xs-4 col-md-3">
+              <strong>{{ smtpConfigs['SMTP_HOST'].str | translate }}</strong>
+            </div> 
+            <div class="col-xs-7 col-md-8">
+              {{ smtpConfigs['SMTP_HOST'].val }}
+            </div>
+            <div class="col-xs-1 col-md-1">
+              <img src="assets/img/ic_right_arrow.png">
+            </div>            
+          </div>
+
+          <div class="row row-content break-all" (click)="openModalEdit('SMTP_PORT')">
+            <div class="col-xs-4 col-md-3">
+              <strong>{{ smtpConfigs['SMTP_PORT'].str | translate }}</strong>
+            </div> 
+            <div class="col-xs-7 col-md-8">
+              {{ smtpConfigs['SMTP_PORT'].val }}
+            </div>
+            <div class="col-xs-1 col-md-1">
+              <img src="assets/img/ic_right_arrow.png">
+            </div>              
+          </div>
+
+          <div class="row row-content break-all" (click)="openModalEdit('SMTP_USER')">
+            <div class="col-xs-4 col-md-3">
+              <strong>{{ smtpConfigs['SMTP_USER'].str | translate }}</strong>
+            </div> 
+            <div class="col-xs-7 col-md-8">
+              {{ smtpConfigs['SMTP_USER'].val }}
+            </div>
+            <div class="col-xs-1 col-md-1">
+              <img src="assets/img/ic_right_arrow.png">
+            </div>              
+          </div>
+
+          <div class="row row-content break-all" (click)="openModalEdit('SMTP_PSWD')">
+            <div class="col-xs-4 col-md-3">
+              <strong>{{ smtpConfigs['SMTP_PSWD'].str | translate }}</strong>
+            </div> 
+            <div class="col-xs-7 col-md-8">
+              {{ smtpConfigs['SMTP_PSWD'].val }}
+            </div>
+            <div class="col-xs-1 col-md-1">
+              <img src="assets/img/ic_right_arrow.png">
+            </div>              
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Edit 視窗 -->
+      <modal #modalEdit name="modalEdit" cssClass="modal_with" [animation]="false">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span *ngIf="curKey">{{ 'edit' | translate }} - {{ smtpConfigs[curKey].str | translate }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" (click)="modalEdit.close();">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group has-feedback">
+              <input type="text" name="editKey" [(ngModel)]="curInput" class="form-control" autocomplete="off">
+              <span class="glyphicon glyphicon-pencil form-control-feedback"></span>
+              <label class="text-danger" *ngIf="errInput">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ errInput | translate }} 
+                  <span *ngIf="errRange">({{ 'allow_range' | translate}}: {{ errRange }})</span>
+                </span>
+              </label>                
+            </div>             
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="modalEdit.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button type="button" class="btn btn-primary" (click)="saveConfigs()">
+                {{ 'confirm' | translate }}
+              </button> 
+            </div>
+          </div>
+        </div>
+      </modal>
+
+    </div>
+  </div>
+</div>

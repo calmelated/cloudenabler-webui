@@ -1,0 +1,243 @@
+<div class="skin-blue sidebar-mini" [class.sidebar-collapse]="header['collspse']" [class.sidebar-open]="header['collspse']">
+  <div id="wrapper" class="wrapper" style="height:100vh;overflow:auto;">
+    <layout-header [header]="header"></layout-header>
+
+    <div class="content-wrapper">
+
+      <!-- Main content-->
+      <section class="content">
+        <div class="row"> 
+          <div class="col-md-12">
+            <div class="box box-primary">
+              <form #registerForm="ngForm" class="form-signin">
+              <table class="table table-hover" *ngIf="register">
+                <thead>
+                <tr>
+                  <th>
+                    <h4>{{ 'register' | translate }}</h4>
+                  </th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td width="30%">{{ 'register_addr' | translate }}</td>
+                  <td>
+                    <span>{{ register['haddr'] }}</span>
+                    <span *ngIf="register['laddr']"> - {{ register['laddr'] }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>{{ 'type' | translate }}</td>
+                  <td>{{ ioType[register.type] | translate }}</td>
+                </tr>
+                <tr>
+                  <td>{{ 'description' | translate }}</td>
+                  <td>
+                    <input type="text" name="desc" #desc="ngModel" [(ngModel)]="register['desc']" 
+                    class="form-control width-400" maxlength="32" required>
+                    <label>
+                      <!-- 錯誤訊息 -->
+                      <span *ngIf="desc.errors && (desc.dirty || desc.touched)" 
+                      class="text-danger">
+                        {{ 'errorRequired' | translate }}
+                      </span>
+                    </label>
+                  </td>
+                </tr>
+                <tr *ngIf="unit === 1">
+                  <td>{{ 'unit' | translate }}</td>
+                  <td>
+                    <input type="text" name="unit" [(ngModel)]="register['unit']" class="form-control width-200 input-unit">
+                    <select name="selectUnit" [(ngModel)]="selectUnit" (ngModelChange)="changeUnit();" 
+                    class="form-control width-200 input-unit">
+                      <option value="">無</option>
+                      <option *ngFor="let unit of unitArray" [value]="unit" [selected]="selectUnit === unit">
+                        {{ unit }}
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+                <tr *ngIf="deviceInt === 1">
+                  <td>{{ 'display_type' | translate }}</td>
+                  <td>
+                    <select name="dt" [(ngModel)]="register['dt']" class="form-control width-400">
+                      <option *ngFor="let dt of dtArray" [value]="dt.value" [selected]="dt.value === register.dt">
+                        {{ dt.name | translate }}
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+                <tr *ngIf="point === 1">
+                  <td>{{ 'floating_points' | translate }}</td>
+                  <td>
+                    <select name="fpt" [(ngModel)]="register['fpt']" class="form-control width-400">
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr *ngIf="button === 1 || switch === 1">
+                  <td>{{ 'btn_press_hint' | translate }}</td>
+                  <td>
+                    <div>
+                      <input type="text" name="on" [(ngModel)]="register['on']" [placeholder]="placeholder" #on="ngModel" 
+                      class="form-control width-400" [NumberRange]="[0,65535]">
+                      <label *ngIf="on.errors && (on.dirty || on.touched)" class="text-danger">
+                        <span>
+                          {{ on.errors['message'] | translate }}
+                        </span>
+                        <span *ngIf="on.errors['range']">
+                          {{ on.errors['range'] }}
+                        </span>
+                      </label>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="button === 1 || switch === 1">
+                  <td>{{ 'btn_release_hint' | translate }}</td>
+                  <td>
+                    <div>
+                      <input type="text" name="off" [(ngModel)]="register['off']" [placeholder]="placeholder" #off="ngModel" 
+                      class="form-control width-400" [NumberRange]="[0,65535]">
+                      <label *ngIf="off.errors && (off.dirty || off.touched)" class="text-danger">
+                        <span>
+                          {{ off.errors['message'] | translate }}
+                        </span>
+                        <span *ngIf="off.errors['range']">
+                          {{ off.errors['range'] }}
+                        </span>
+                      </label>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="button === 1">
+                  <td>{{ 'btn_time' | translate }}</td>
+                  <td>
+                    <div>
+                      <input type="text" name="btnTime" [(ngModel)]="register['btnTime']" [placeholder]="time" #btnTime="ngModel" 
+                      class="form-control width-400" [NumberRange]="[1,60]">
+                      <label *ngIf="btnTime.errors && (btnTime.dirty || btnTime.touched)" class="text-danger">
+                        <span *ngIf="btnTime.errors['message']">
+                          {{ btnTime.errors['message'] | translate }}
+                        </span>
+                        <span *ngIf="btnTime.errors['range']">
+                          {{ btnTime.errors['range'] }}
+                        </span>
+                      </label>
+                      <label *ngIf="btnTime.value <= logFreq && !btnTime.errors" class="text-danger">
+                        {{ 'err_dur_better_lt_log_freq' | translate}}
+                      </label>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="alarm === 1">
+                  <td>{{ 'refer_register' | translate }}</td>
+                  <td>
+                    <select name="refReg" [(ngModel)]="register['refReg']" class="form-control width-400">
+                      <option value="">{{ 'none' | translate }}</option>
+                      <option [value]="reg.addr" *ngFor="let reg of registerList">
+                        {{ reg.desc }} ( {{ reg.addr }} )
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+                <!-- M2M IO 裝置名稱 -->
+                <tr class="form-group" *ngIf="io === 1">
+                  <td>{{ 'device' | translate }}</td>
+                  <td>
+                    <select name="swSN" class="form-control" [(ngModel)]="register['swSN']" (ngModelChange)="getIORegisterList()">
+                      <option [value]="device.sn" *ngFor="let device of ioDeviceList">
+                        {{ device.name }} ( {{ device.sn }} ) 
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+                <!-- M2M IO 暫存器 -->
+                <tr class="form-group" *ngIf="io === 1">
+                  <td>{{ 'register' | translate }}</td>
+                  <td>
+                    <select name="swAddr" class="form-control" [(ngModel)]="register['swAddr']">
+                      <option [value]="reg.addr" *ngFor="let reg of ioRegisterList">
+                        {{ reg.desc }} ( {{ reg.addr }} ) 
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>{{ 'limited_access' | translate }}</td>
+                  <td>
+                    <table style="width:50%;">
+                      <tr>
+                        <th>{{ 'name' | translate}}</th>
+                        <th>{{ 'enable' | translate}}</th>
+                      </tr>
+                      <tr *ngFor="let user of userList; let i=index; ">
+                        <td>{{ user.name }}</td>
+                        <td>
+                          <input type="checkbox" name="value_{{ i }}" [(ngModel)]="user.value" [checked]="user.value === 1" [disabled]="user.disabled === 1">
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td>{{ 'en_reg_logging' | translate }}</td>
+                  <td>
+                    <input type="checkbox" name="enlog" [(ngModel)]="register['enlog']" [checked]="register['enlog'] === 1">
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td class="text-right">
+                    <button type="button" class="btn btn-default" (click)="back()">
+                      {{ 'back' | translate }}
+                    </button>
+                    <button type="button" class="btn btn-primary" (click)="save()" 
+                    [disabled]="!registerForm.form.valid">
+                      {{ 'send' | translate }}
+                    </button>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- USB紀錄提示 POPUP視窗 -->
+      <modal #modalAlarm name="modalAlarm" cssClass="modal_with" [animation]="false">
+          <div class="box box-primary box-solid">
+            <div class="box-header with-border">
+              <h3 class="box-title">
+                <span>{{ 'caution' | translate }}</span>
+              </h3>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" (click)="modalAlarm.close();">
+                  <i class="fa fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <div class="box-body">
+              <div class="form-group">
+                  {{ 'usb_logging' | translate }}
+              </div>
+              <div class="ksmt-modal-footer">
+                <button type="button" class="btn btn-danger" (click)="modalAlarm.close()">
+                  {{ 'confirm' | translate }}
+                </button> 
+              </div>
+            </div>
+          </div>
+      </modal>
+
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,296 @@
+<modal-dialog [openModalDialog]="openModalDialog"></modal-dialog>
+<div class="hold-transition login-page" style="height:100vh;overflow:auto;" *ngIf="doneChkStatus">
+  <div class="login-box">
+    <div class="login-logo">
+      <img src="assets/img/logo.png">
+      <br>
+      <b>Cloud Enabler</b>
+    </div>
+
+    <!-- 登入欄位 -->
+    <div class="login-box-body form-group">
+      <form class="form-signin" (ngSubmit)="signIn()">
+        <div class="form-group has-feedback">
+          <label>
+            {{ 'company' | translate }}
+          </label>
+          <input type="text" name="company" [(ngModel)]="login.company.val" class="form-control" 
+          maxlength="32" autocomplete="off">
+          <span class="glyphicon glyphicon-user form-control-feedback"></span>
+          <div class="text-danger" *ngIf="login.company.err">
+            <span class="glyphicon glyphicon-alert"></span>
+            <span>{{ login.company.err | translate }}</span>
+          </div>                  
+        </div>
+        <div class="form-group has-feedback">
+          <label>
+            {{ 'account' | translate }}
+          </label>
+          <input type="text" name="account" [(ngModel)]="login.account.val" class="form-control" maxlength="32" autocomplete="off">
+          <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+          <div class="text-danger" *ngIf="login.account.err">
+            <span class="glyphicon glyphicon-alert"></span>
+            <span>{{ login.account.err | translate }}</span>
+          </div>  
+        </div>
+        <div class="form-group has-feedback">
+          <label>
+            {{ 'password' | translate }}
+          </label>
+          <input type="password" name="password" [(ngModel)]="login.password.val" class="form-control" maxlength="32" autocomplete="off">
+          <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+          <div class="text-danger" *ngIf="login.password.err">
+            <span class="glyphicon glyphicon-alert"></span>
+            <span>{{ login.password.err | translate }}</span>
+          </div>  
+        </div>
+        <div class="form-group has-feedback" *ngIf="showCompanyId === '1'">
+          <label>
+            {{ 'target_company' | translate }}
+          </label>
+          <input type="text" name="companyId" [(ngModel)]="login.companyId.val" class="form-control">
+          <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+        </div>
+        <div class="form-group has-feedback" *ngIf="showCompanyId === '1'">
+          <label>
+            DB index
+          </label>
+          <input type="text" name="dbIndex" [(ngModel)]="login.dbIndex.val" class="form-control">
+          <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+        </div>
+        <!-- 登入按鈕 -->
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary btn-block btn-flat"> 
+            <span>{{ 'signin' | translate }}</span>
+          </button>
+        </div>
+        <!-- 錯誤訊息 -->
+        <div class="text-center text-danger" style="padding:15px;" *ngIf="errorMessage">
+          <span>{{ errorMessage }}</span>
+        </div>
+      </form>
+
+      <!-- 註冊欄位 POPUP視窗 -->
+      <modal name="modalRegist" #modalRegist cssClass="modal_with" [keyboard]="false" [backdrop]="'static'" [animation]="false">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ 'signup' | translate }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" (click)="modalRegist.close();">
+              <i class="fa fa-times"></i>
+            </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group has-feedback">
+              <label>
+                {{ 'company' | translate }}
+              </label>
+              <input type="text" name="registercompany" [(ngModel)]="register.company.val" class="form-control" maxlength="32" autocomplete="off">
+              <span class="glyphicon glyphicon-user form-control-feedback"></span>
+              <div class="text-danger" *ngIf="register.company.err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ register.company.err | translate }}</span>
+              </div>                
+            </div>
+
+            <div class="form-group has-feedback">
+              <label>
+                {{ 'account' | translate }}
+              </label>
+              <input type="email" name="registeraccount" [(ngModel)]="register.account.val" class="form-control" maxlength="32" autocomplete="off">
+              <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+              <div class="text-danger" *ngIf="register.account.err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ register.account.err | translate }}</span>
+              </div>  
+            </div>
+
+            <div class="form-group has-feedback">
+              <label> 
+                {{ 'password' | translate }}
+              </label>
+              <input type="password" name="registerpassword" [(ngModel)]="register.password.val" class="form-control" maxlength="32" autocomplete="off">
+              <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+              <div class="text-danger" *ngIf="register.password.err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ register.password.err | translate }}</span>
+              </div>  
+            </div>
+            
+            <div class="form-group has-feedback">
+              <label>
+                {{ 'confirm_password' | translate }}
+              </label>
+              <input type="password" name="confirmpassword" [(ngModel)]="register.confirm.val" class="form-control" maxlength="32" autocomplete="off">
+              <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+              <div class="text-danger" *ngIf="register.confirm.err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ register.confirm.err | translate }}</span>
+              </div>  
+            </div>
+
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="modalRegist.close()">
+                {{ 'cancel' | translate }}
+              </button>
+              <button type="button" class="btn btn-primary" (click)="signUpCompany()">
+                {{ 'confirm' | translate }}
+              </button> 
+            </div>
+
+          </div>
+        </div>
+      </modal>
+
+      <!-- 重設密碼欄位 POPUP視窗 -->
+      <modal #modalResetPassword name="modalResetPassword" cssClass="modal_with" [animation]="false">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ 'reset_password' | translate }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" (click)="modalResetPassword.close();">
+              <i class="fa fa-times"></i>
+            </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group has-feedback">
+              <label>
+                {{ 'company' | translate }}
+              </label>
+              <input type="text" name="resetcompany" [(ngModel)]="reset.company.val" class="form-control" maxlength="32" autocomplete="off">
+              <span class="glyphicon glyphicon-user form-control-feedback"></span>
+              <div class="text-danger" *ngIf="reset.company.err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ reset.company.err | translate }}</span>
+              </div> 
+            </div>
+            <div class="form-group has-feedback">
+              <label>
+                {{ 'account' | translate }}
+              </label>
+              <input type="text" name="resetaccount" [(ngModel)]="reset.account.val" class="form-control" maxlength="32" autocomplete="off">
+              <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+              <div class="text-danger" *ngIf="reset.account.err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ reset.account.err | translate }}</span>
+              </div> 
+            </div>
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="modalResetPassword.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button type="button" class="btn btn-primary" (click)="sendPassword()">
+                {{ 'confirm' | translate }}
+              </button> 
+            </div>
+          </div>
+        </div>
+      </modal>
+
+      <!-- 啟用帳號欄位 POPUP視窗 -->
+      <modal #modalActive name="modalActive" cssClass="modal_with" [animation]="false" [keyboard]="false" [backdrop]="'static'">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ 'account_activate' | translate }}</span>
+            </h3>
+<!--               <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" (click)="modalActive.close();">
+              <i class="fa fa-times"></i>
+            </button>
+            </div> -->
+          </div>
+          <div class="box-body">
+            <div class="form-group has-feedback">
+              <label>
+                {{ 'new_password' | translate }}
+              </label>
+              <input type="password" name="activatenewpassword" [(ngModel)]="activate.password.val" class="form-control" maxlength="32" autocomplete="off">
+              <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+              <div class="text-danger" *ngIf="activate.password.err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ activate.password.err | translate }}</span>
+              </div>                 
+            </div>
+            <div class="form-group has-feedback">
+              <label>
+                {{ 'confirm_password' | translate }}
+              </label>
+              <input type="password" name="activateconfirmpassword" [(ngModel)]="activate.confirm.val" class="form-control" maxlength="32" autocomplete="off">
+              <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+              <div class="text-danger" *ngIf="activate.confirm.err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ activate.confirm.err | translate }}</span>
+              </div>                 
+            </div>
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-primary" (click)="sendActivate()">
+                {{ 'confirm' | translate }}
+              </button> 
+            </div>
+          </div>
+        </div>
+      </modal>
+    </div>
+
+    <!-- Trial Login Modal -->
+    <modal #modalTrialLogin name="modalTrialLogin" cssClass="modal_with" [animation]="false">
+      <div class="box box-primary box-solid">
+        <div class="box-header with-border">
+          <h3 class="box-title">
+            <span>{{ 'trial_login' | translate }}</span>
+          </h3>
+          <div class="box-tools pull-right">
+          <button type="button" class="btn btn-box-tool" (click)="modalTrialLogin.close();">
+            <i class="fa fa-times"></i>
+          </button>
+          </div>
+        </div>
+        <div class="box-body">
+          <div class="form-group has-feedback">
+            <label>
+              {{ 'company' | translate }}
+            </label>
+            <input type="text" name="resetcompany" [(ngModel)]="trial.company.val" class="form-control" maxlength="32" autocomplete="off">
+            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+            <div class="text-danger" *ngIf="trial.company.err">
+              <span class="glyphicon glyphicon-alert"></span>
+              <span>{{ trial.company.err | translate }}</span>
+            </div> 
+          </div>
+          <div class="ksmt-modal-footer">
+            <button type="button" class="btn btn-default" (click)="modalTrialLogin.close()">
+              {{ 'cancel' | translate }}
+            </button> 
+            <button type="button" class="btn btn-primary" (click)="trialLogin()">
+              {{ 'confirm' | translate }}
+            </button> 
+          </div>
+        </div>
+      </div>
+    </modal>
+
+    <!-- 登入畫面下方按鈕 -->
+    <div class="text-center">
+      <button type="button" class="btn btn-sm gray-button btn-flat" (click)="openSignUp()"> 
+        <span>{{ 'signup' | translate }}</span>
+      </button>
+      <button type="button" class="btn btn-sm gray-button btn-flat" (click)="openForgetPassword()"> 
+        <span>{{ 'reset_password' | translate }}</span>
+      </button>
+      <button type="button" class="btn btn-sm gray-button btn-flat" (click)="openTrialLogin()"> 
+        <span>{{ 'trial_login' | translate }}</span>
+      </button>        
+      <button type="button" class="btn btn-sm gray-button btn-flat" (click)="openCloud();"> 
+        <span>{{ 'cloud_status' | translate }}</span>
+      </button>
+    </div>
+
+  </div>
+</div>

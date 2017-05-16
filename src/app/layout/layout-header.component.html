@@ -1,0 +1,248 @@
+<!-- 網頁上方 menu -->
+<header class="main-header">
+	<!-- Logo -->
+	<a routerLink="/devices" class="logo">
+		<span class="logo-mini"> 
+			<img src="assets/img/logo.png" style="width:40px">
+		</span>
+		<span class="logo-lg">
+		<b>{{ this.customer }}</b> 
+    Cloud</span>
+	</a>
+
+	<!-- Header Navbar-->
+	<nav role="navigation" class="navbar navbar-static-top">
+		<!-- Sidebar toggle button-->
+		<a class="sidebar-toggle" (click)="toggle()" role="button" style="text-decoration:none;">
+			<span class="sr-only">Toggle navigation</span>
+		</a>
+
+    <!-- title -->
+    <div class="navbar-title" *ngIf="!header['subTitle']">
+      <div *ngIf="header['title']">
+        {{ header['title'] | translate }}
+      </div>      
+    </div>
+		<div class="navbar-title" style="height: 50px; padding: 3px" *ngIf="header['subTitle']">
+      <div *ngIf="header['title']" style="margin-top: 0px; font-size: 18px;">
+        {{ header['title'] | translate }}
+      </div>
+      <div *ngIf="header['subTitle']" style="margin-bottom: 0px; font-size: 10px;">
+        {{ header['subTitle'] | translate }}
+      </div>
+		</div>
+
+		<!-- 顯示按鈕 目前有 帳戶新增按鈕 -->
+		<div class="navbar-custom-menu">
+			<div class="nav" style="padding:8px;">
+        <!-- 新增Register -->
+        <button class="btn btn-primary" (click)="onRegList('new')" *ngIf="header['register']">
+          <span class="glyphicon glyphicon-plus"></span> 
+          <span>{{ 'add' | translate }}</span>
+        </button>          
+        <!-- 新增Device -->
+        <button class="btn btn-primary" (click)="onDevList('new')" *ngIf="header['device']">
+          <span class="glyphicon glyphicon-plus"></span> 
+          <span>{{ 'add' | translate }}</span>
+        </button>        
+        <!-- 新增Slave Device -->
+        <button class="btn btn-primary" (click)="onSlvDevList('new')" *ngIf="header['slvdev']">
+          <span class="glyphicon glyphicon-plus"></span> 
+          <span>{{ 'add' | translate }}</span>
+        </button>            
+        <!-- 新增使用者 -->
+        <button class="btn btn-primary" (click)="onAccount('new')" *ngIf="header['account']">
+          <span class="glyphicon glyphicon-plus"></span> 
+          <span>{{ 'add' | translate }}</span>
+        </button>
+        <!-- Device evtlog 搜尋功能 -->
+        <button class="btn btn-primary" (click)="onEvtLog('search');" *ngIf="header['evtlog']">
+          <span class="fa fa-fw fa-search"></span> 
+          <span>{{ 'search' | translate }}</span>
+        </button>             
+        <!-- Iostlog 搜尋功能 -->
+        <button class="btn btn-primary" (click)="onIostLog('search');" *ngIf="header['iostlog']">
+          <span class="fa fa-fw fa-search"></span> 
+          <span>{{ 'search' | translate }}</span>
+        </button>          
+        <!-- Audit 搜尋功能 -->
+        <button class="btn btn-primary" (click)="onAuditLog('search');" *ngIf="header['auditlog']">
+          <span class="fa fa-fw fa-search"></span> 
+          <span>{{ 'search' | translate }}</span>
+        </button>             
+        <!-- Alarm 搜尋功能 -->
+        <button class="btn btn-primary" (click)="onAlarmLog('search');" *ngIf="header['alarmlog']">
+          <span class="fa fa-fw fa-search"></span> 
+          <span>{{ 'search' | translate }}</span>            
+        </button>             
+        <!-- 新增檔案連結 -->
+        <button class="btn btn-primary" (click)="onFlink('new');" *ngIf="header['flink']">
+          <span class="glyphicon glyphicon-plus"></span> 
+          <span>{{ 'add' | translate }}</span>
+        </button>
+        <!-- 新增子公司 -->
+        <button class="btn btn-primary" (click)="onSubCompany('new')" *ngIf="header['subCompany']">
+          <span class="glyphicon glyphicon-plus"></span> 
+          <span>{{ 'add' | translate }}</span>
+        </button>
+        <!-- 新增暫存器 -->
+        <button class="btn btn-primary" (click)="openRegister(); registerForm.reset();" *ngIf="header['registerList']">
+          <span class="glyphicon glyphicon-plus"></span> 
+          <span>{{ 'add' | translate }}</span>
+        </button>          
+        <!-- 新增slave暫存器 -->
+        <button class="btn btn-primary" (click)="openAddSalve()" *ngIf="header['slaveRegisterList']">
+          <span class="glyphicon glyphicon-plus"></span> 
+          <span>{{ 'add' | translate }}</span>
+        </button>
+        <!-- 新增公佈欄 -->
+        <button class="btn btn-primary" (click)="onAnnouncement('new')" 
+        *ngIf="header['announcement'] && userAdmin === '2'">
+          <span class="glyphicon glyphicon-plus"></span> 
+          <span>{{ 'add' | translate }}</span>
+        </button>
+        <!-- 新增群組 -->
+        <button class="btn btn-primary" (click)="onGroup('new')" 
+        *ngIf="header['group'] && userAdmin === '2'">
+          <span class="glyphicon glyphicon-plus"></span> 
+          <span>{{ 'add' | translate }}</span>
+        </button>
+			</div>
+		</div>
+	</nav>
+</header>
+
+<!-- 網頁左邊選單 -->
+<aside class="main-sidebar">
+	<section class="sidebar">
+    <!-- 使用者訊息 -->
+    <div class="user-panel">
+      <div class="pull-left image detail-open" (click)="modalUserInfo.open()" >
+				<img src="assets/img/ic_admin_user.png" alt="User Image" class="user-image" *ngIf="userAdmin === '1' || userAdmin === '2'">
+				<img src="assets/img/ic_user.png" alt="User Image" class="user-image" *ngIf="userAdmin === '0'">
+      </div>
+      <div class="pull-left info" style="width:75%;">
+				<div class="form-group user-company">
+					{{ 'company' | translate }} : {{ userCompany }}
+				</div>
+				<div class="user-account">
+					{{ 'name' | translate }} : {{ userName }}
+				</div>
+      </div>
+    </div>
+
+    <!-- menu 選單 -->
+		<ul class="sidebar-menu">
+			<li><hr style="margin:10px 0px;"></li>
+			<li *ngFor="let menu of leftMenu" [class.active]="menu.path === path">
+				<a [routerLink]="menu.path">
+					<i class="{{ menu.class }}"></i>
+					<span>{{ menu.name | translate }}</span>
+				</a>
+			</li>
+      <!-- 管理員 -->
+			<li class="treeview" [class.active]="adminAct" *ngIf="userAdmin === '1' || userAdmin === '2'">
+				<a (click)="adminAct = !adminAct">
+					<i class="fa fa-gear"></i>
+					<span>{{ 'admin' | translate }}</span>
+          <span class="pull-right-container">
+					  <i class="fa fa-angle-left pull-right"></i>
+          </span>
+				</a>
+				<ul class="treeview-menu">
+					<li *ngFor="let menu of adminMenu" [class.active]="menu.path === path" [hidden]="menu.show !=='1'">
+						<a [routerLink]="menu.path">
+							<i class="{{ menu.class }}"></i>
+							<span>{{ menu.name | translate }}</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+      <!-- 超級管理員 -->
+      <li class="treeview" [class.active]="superAct" 
+        *ngIf="subCompId === '0' && (userCompany === 'KSMT Microtech' || userAdmin ==='2')">
+        <a (click)="superAct = !superAct">
+          <i class="fa fa-gear"></i>
+          <span>KSMT {{ 'admin' | translate }}</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li *ngFor="let menu of superAdminMenu" [class.active]="menu.path === path" [hidden]="userAdmin !=='2'">
+            <a [routerLink]="menu.path">
+              <i class="{{ menu.class }}"></i>
+              <span>{{ menu.name | translate }}</span>
+            </a>
+          </li>
+          <li [class.active]="path === '/_debug'">
+            <a href="/_debug" target="_blank">
+              <i class="fa fa-circle-o"></i>
+              <span>{{ 'debug' | translate }}</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+		</ul>
+	</section>
+</aside>
+
+<!-- 使用者訊息 POPUP視窗 -->
+<modal #modalUserInfo name="modalUserInfo" cssClass="modal_with" [animation]="false">
+  <div class="box box-primary box-solid">
+    <div class="box-header with-border">
+      <h3 class="box-title">
+        <span>{{ 'login_user' | translate }}</span>
+      </h3>
+      <div class="box-tools pull-right">
+        <button type="button" class="btn btn-box-tool" (click)="modalUserInfo.close();">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+    </div>
+    <div class="box-body">
+      <div class="form-group">
+        <label>
+          {{ 'company' | translate }}
+        </label> :
+        <span>{{ userCompany }}</span>
+      </div>
+      <div class="form-group">
+        <label>
+          {{ 'account' | translate }}
+        </label> :
+        <span>{{ userAccount }}</span>
+      </div>
+      <div class="form-group">
+        <label>
+          {{ 'name' | translate }}
+        </label> :
+        <span>{{ userName }}</span>
+      </div>
+      <div class="form-group">
+        <label>
+          <span>{{ 'lang' | translate }}</span>
+        </label> :
+        <select [(ngModel)]="userLang" (ngModelChange)="changeLanguage(userLang)" class="form-control" 
+        name="userLang" style="width:40%;display:inline;">
+          <option value="en_US" [selected]="userLang === 'en_US'">English</option>
+          <option value="zh_TW" [selected]="userLang === 'zh_TW'">繁體中文</option>
+        </select>
+      </div>
+      <div class="ksmt-modal-footer">
+        <button type="button" class="btn btn-primary" (click)="signOut()" *ngIf="subCompId === '0'">
+          {{ 'logout' | translate }}
+        </button>
+        <button type="button" class="btn btn-primary" (click)="logoutSubCompany()" *ngIf="subCompId !== '0'">
+          {{ 'logout_subsidiary_message' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</modal>
+
+<div class="callout-box main-footer" [class.callout-show]="header['errorMessage']" style="border: none; padding: 0px;">
+  <div class="callout callout-danger" style="margin: 0px;">
+    <p>{{ header['errorMessage'] | translate }}</p>
+  </div>
+</div>

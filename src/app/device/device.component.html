@@ -1,0 +1,208 @@
+<modal-dialog [openModalDialog]="openModalDialog" (evtClose)="onDialogClose($event);"></modal-dialog>
+<div class="skin-blue sidebar-mini" [class.sidebar-collapse]="header['collspse']" [class.sidebar-open]="header['collspse']">
+  <div id="wrapper" class="wrapper" style="height:100vh;overflow:auto;">
+    <layout-header [header]="header" (devList)="onDevList($event);"></layout-header>
+
+    <div class="content-wrapper">
+      <section class="content">
+        <div class="box box-primary">
+          <div class="row title">
+            <div class="col-xs-2 col-md-2">
+              <h4>
+                {{ 'status' | translate }}
+              </h4>
+            </div>
+            <div class="col-xs-7 col-md-8">
+              <h4>
+                <div class="row">
+                  <div class="col-md-6">
+                    {{ 'device' | translate }}
+                  </div>
+                  <div class="col-md-6">
+                    {{ 'device_sn' | translate }}
+                  </div>
+                </div>
+              </h4>
+            </div>
+            <div class="col-xs-3 col-md-2">
+            </div>
+          </div>
+
+          <div *ngFor="let dev of devList">
+            <div class="row row-content">
+              <div class="col-xs-2 col-md-2" [routerLink]="dev['regUrl']">
+                <img [src]="dev.icon">
+              </div>
+              <div class="col-xs-7 col-md-8" [routerLink]="dev['regUrl']">
+                <div class="row row-line">
+                  <div class="col-md-6 log-message">
+                    {{ dev['name'] }}
+                  </div>
+                  <div class="col-md-6">
+                    {{ dev['devInfo'] }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-3 col-md-2" style="line-height: 48px;">
+                <div class="dropdown" *ngIf=" userAdmin != '0'">    
+                  <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    {{ 'edit' | translate }}
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li *ngIf="dev['editUrl']">
+                      <a [routerLink]="dev['editUrl']"> 
+                        <span class="glyphicon glyphicon-list-alt"></span> 
+                        <span>{{ (dev['sid'] ? 'edit_slave_device' : 'edit_device') | translate }}</span>
+                      </a>
+                    </li>
+                    <li *ngIf="dev['mstDev']">
+                      <a routerLink="/slave/{{ dev.sn }}">
+                        <span class="glyphicon glyphicon-list-alt"></span> 
+                        <span>
+                          {{ 'slave_device' | translate }}
+                        </span>
+                      </a>
+                    </li>
+                    <li *ngIf="dev['evtlogUrl']">
+                      <a [routerLink]="dev['evtlogUrl']">
+                        <span class="glyphicon glyphicon-list-alt"></span> 
+                        <span>
+                          {{ 'event_log' | translate }}
+                        </span>
+                      </a>
+                    </li>          
+                    <li *ngIf="dev['exportUrl']">
+                      <a [href]="dev['exportUrl']">
+                        <span class="glyphicon glyphicon-file"></span> 
+                        <span>
+                          {{ (dev['sid'] ? 'export_slvdev_profile' : 'export_profile') | translate }}
+                        </span>
+                      </a>
+                    </li>          
+                    <li>
+                      <a (click)="openModalImport(dev);">
+                        <span class="glyphicon glyphicon-file"></span> 
+                        <span>
+                          {{ (dev['sid'] ? 'import_slvdev_profile' : 'import_profile') | translate }}
+                        </span>
+                      </a>
+                    </li>          
+                    <li role="separator" class="divider"></li>         
+                    <li>
+                      <a (click)="openModalRemove(dev);">
+                        <span class="glyphicon glyphicon-trash"></span> 
+                        <span>
+                          {{ 'remove' | translate }}
+                        </span>
+                      </a>
+                    </li>     
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>    
+      </section>
+
+      <!-- 匯入檔案 POPUP視窗 -->
+      <modal #modalImport name="modalImport" cssClass="modal_with" [animation]="false">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span *ngIf="curDev">                  
+                {{ 'import_profile' | translate }}
+                ({{ 'device' | translate }}: {{ curDev['name'] | translate }})
+              </span>
+            </h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" (click)="modalImport.close();">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group">
+              <form role="form" enctype="multipart/form-data">
+                <input type="file" name="file" (change)="fileChangeEvent($event)">
+              </form>
+            </div>
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="modalImport.close()">
+                {{ 'cancel' | translate }}
+              </button>
+              <button type="button" class="btn btn-primary" (click)="importProfile()">
+                {{ 'confirm' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </modal>
+
+      <!-- 新增 device -->
+      <modal #modalAddDev name="modalAddDev" cssClass="modal_with" [animation]="false" [keyboard]="false" [backdrop]="'static'">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ 'new_device' | translate }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" (click)="modalAddDev.close();">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group has-feedback">
+              <label> {{ 'device_model' | translate }} </label>
+              <select [(ngModel)]="dev['mo'].val"  class="form-control">
+                <option [value]="model" *ngFor="let model of modelList">{{ model }}</option>
+              </select>   
+              <div class="text-danger" *ngIf="dev['mo'].err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ dev['mo'].err | translate }}</span>
+              </div>                
+            </div>            
+            <div class="form-group has-feedback">
+              <label> {{ 'device_sn' | translate }} </label>
+              <input type="text" name="sn" [(ngModel)]="dev['sn'].val" class="form-control" autocomplete="off" maxlength="32">
+              <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+              <div class="text-danger" *ngIf="dev['sn'].err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ dev['sn'].err | translate }}</span>
+              </div>                 
+            </div>           
+            <div class="form-group has-feedback">
+              <label> {{ 'device_name' | translate }} </label>
+              <input type="text" name="name" [(ngModel)]="dev['name'].val" class="form-control" autocomplete="off" maxlength="32">
+              <span class="glyphicon glyphicon-user form-control-feedback"></span>
+              <div class="text-danger" *ngIf="dev['name'].err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ dev['name'].err | translate }}</span>
+              </div>    
+            </div>          
+            <div class="form-group has-feedback">
+              <label> {{ 'device_polling' | translate }} </label>
+              <input type="text" name="pollTime" [(ngModel)]="dev['pollTime'].val" class="form-control" autocomplete="off" maxlength="32">
+              <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+              <div class="text-danger" *ngIf="dev['pollTime'].err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ dev['pollTime'].err | translate }}</span>
+                <span *ngIf="dev['pollTime'].errRange">({{ 'allow_range' | translate}}: {{ dev['pollTime'].errRange }})</span>
+              </div>   
+            </div>
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="modalAddDev.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button type="button" class="btn btn-primary" (click)="addDev()">
+                {{ 'confirm' | translate }}
+              </button> 
+            </div>
+          </div>
+        </div>
+      </modal>
+
+    </div>
+  </div>
+</div>

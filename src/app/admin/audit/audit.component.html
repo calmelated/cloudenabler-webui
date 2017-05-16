@@ -1,0 +1,83 @@
+<div class="skin-blue sidebar-mini" [class.sidebar-collapse]="header['collspse']" [class.sidebar-open]="header['collspse']">
+  <div class="wrapper" style="height:100vh;overflow: auto;" (scroll)="onScroll($event)">
+    <layout-header [header]="header" (auditlog)="onAuditLog($event);"></layout-header>
+
+    <div class="content-wrapper">
+      <section class="content">
+        <div class="box box-primary">
+          <div class="row title">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-10">
+              <div class="row">
+                <div class="col-md-6">
+                  <h4>
+                    {{ 'logging' | translate }}
+                  </h4>
+                </div>
+                <div class="col-md-6">
+                  <h4>
+                    {{ 'time' | translate }}
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row row-content" *ngFor="let audit of auditLogs;let i = index; ">
+            <div class="col-xs-2 col-md-2">
+              <div class="log-image">
+              <img [src]="audit.image">
+              </div>
+            </div>
+            <div class="col-xs-10 col-md-10 log-info">
+              <div class="row row-line">
+                <div class="col-md-6 log-message">
+                  <span class="log-span" [innerHTML]="audit.message"></span>
+                </div>
+                <div class="col-md-6 log-word">
+                  <span class="log-span">
+                    {{ audit.time }}, {{'by' | translate }} {{ audit.account }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="refresh-log" *ngIf="showRefresh === 1">
+            <span class="fa fa-refresh fa-spin"></span>
+          </div>
+        </div>
+      </section>
+
+      <modal #modalSearch name="modalSearch" cssClass="modal_with" [animation]="false">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ 'search' | translate }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" (click)="modalSearch.close();">
+              <i class="fa fa-times"></i>
+            </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group">
+              {{ 'chooseDate' | translate }} : 
+              <input type="text" [(ngModel)]="searchDate" ng2-datetime-picker 
+                date-only="true" date-format="MM/DD/YYYY" class="form-control">
+            </div>
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="modalSearch.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button class="btn btn-primary" (click)="getAuditLog(false)">
+                {{ 'search' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </modal>
+
+    </div>
+  </div>
+</div>

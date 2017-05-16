@@ -1,0 +1,47 @@
+<div class="skin-blue sidebar-mini" [class.sidebar-collapse]="header['collspse']" [class.sidebar-open]="header['collspse']">
+  <div id="wrapper" class="wrapper" style="height:100vh;overflow:auto;">
+    <layout-header [header]="header"></layout-header>
+
+    <div class="content-wrapper">
+      <!-- Main content-->
+      <section class="content">
+        <div class="row"> 
+          <div class="col-md-12">
+            <div [ng2-highcharts]="chartOptions"></div>
+          </div>
+        </div>
+
+        <div class="row"> 
+          <div class="col-md-12">
+            <select [(ngModel)]="timeOption" (change)="setNewData()">
+              <option [value]="-1">前</option>
+              <option [value]="0">目前</option>
+              <option [value]="1">後</option>
+            </select>
+            <div #highcharts name="highcharts" [ng2-highcharts]="beforeOptions"></div>
+          </div>
+        </div>
+
+        <div class="row"> 
+          <div class="col-md-12">
+            <div [ng2-highcharts]="interruptOptions"></div>
+          </div>
+        </div>
+
+        <div class="row"> 
+          <div class="col-md-12">
+            <div [ng2-highcharts]="dOptions"></div>
+          </div>
+        </div>
+
+        <div class="row"> 
+          <div class="col-md-12">
+            <div [ng2-highstocks]="stockOtiopn"></div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </div>
+</div>

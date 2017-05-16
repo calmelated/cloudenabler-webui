@@ -1,0 +1,157 @@
+<div class="skin-blue sidebar-mini" [class.sidebar-collapse]="header['collspse']" [class.sidebar-open]="header['collspse']">
+  <div id="wrapper" class="wrapper" style="height:100vh;overflow:auto;" (scroll)="onScroll($event)">
+    <layout-header [header]="header" (group)="onGroup($event);"></layout-header>
+
+    <div class="content-wrapper">
+      <section class="content">
+        <div class="box box-primary">
+          <div class="row title">
+            <div class="col-xs-9 col-md-10">
+              <h4>
+                <div class="row">
+                  <div class="col-md-12">
+                    {{ 'name' | translate }}
+                  </div>
+                </div>
+              </h4>
+            </div>
+            <div class="col-xs-3 col-md-2">
+              <h4></h4>
+            </div>
+          </div>
+          <div class="row row-content" *ngFor="let group of groupList; let i = index ">
+            <div class="col-xs-9 col-md-10">
+              <div class="row row-line">
+                <div class="col-md-12 log-message">
+                  <img src="/assets/img/ic_group.png"> 
+                  {{ group }}
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-3 col-md-2">
+              <div class="btn-group">    
+                <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">
+                  {{ 'edit' | translate }}
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a routerLink="/group/view">
+                      <span class="fa fa-th-list"></span> 
+                      <span>
+                        {{ 'view' | translate }}
+                      </span>
+                    </a>
+                  </li> 
+                  <li>
+                    <a (click)="openModalEdit(i);">
+                      <span class="glyphicon glyphicon-list-alt"></span> 
+                      <span>
+                        {{ 'edit' | translate }}
+                      </span>
+                    </a>
+                  </li> 
+                  <li role="separator" class="divider"></li>         
+                  <li>
+                    <a (click)="openModalRemove(i);">
+                      <span class="glyphicon glyphicon-trash"></span> 
+                      <span>
+                        {{ 'remove' | translate }}
+                      </span>
+                    </a>
+                  </li>     
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </section>
+
+      <!-- 新增下載連結 POPUP視窗 -->
+      <modal #modalAddGroup name="modalAddGroup" cssClass="modal_with" [animation]="false" [keyboard]="false" [backdrop]="'static'">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ modalGroupTitle | translate }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" (click)="modalAddGroup.close();">
+              <i class="fa fa-times"></i>
+            </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group">
+              {{ 'new_group_name' | translate }}
+              <input type="text" [(ngModel)]="addGroup['name'].val" class="form-control" maxlength="32">
+              <div class="text-danger" *ngIf="addGroup['name'].err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ addGroup['name'].err | translate }}</span>
+                <span *ngIf="addGroup['name'].errRange">({{ 'allow_range' | translate}}: {{ addGroup['name'].errRange }})</span>
+              </div>                
+            </div>
+            <div class="form-group" *ngIf="modalGroupTitle == 'new_group'">
+              {{ 'device' | translate }}
+              <select [(ngModel)]="addGroup['sn'].val" class="form-control" (click)="getRegister()">
+                <option value="{{ device.sn }}" *ngFor="let device of deviceList">
+                  {{ device.name }} ( {{ device.sn }} )
+                </option>
+              </select>             
+            </div>
+            <div class="form-group" *ngIf="modalGroupTitle == 'new_group'">
+              {{ 'register' | translate }}
+              <select [(ngModel)]="addGroup['addr'].val" class="form-control">
+                <option value="{{ register.haddr }}" *ngFor="let register of registerList">
+                  {{ register.desc }}
+                  ( {{ register.haddr }} 
+                  <span *ngIf="register.laddr">- {{ register.laddr }}</span> )
+                </option>
+              </select>            
+            </div>
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="modalAddGroup.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button class="btn btn-primary" (click)="saveGroup(curIdx)">
+                {{ 'send' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </modal>
+
+      <!-- 警告 POPUP視窗 -->
+      <modal #modalRemove name="modalRemove" cssClass="modal_with" [animation]="false">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ 'caution' | translate }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" (click)="modalRemove.close();">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group">
+              <div><strong>{{ 'name' | translate }}: {{ addGroup['name'].val }}</strong></div>
+              <div>{{ 'make_sure_delete' | translate }}</div>
+            </div>
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="modalRemove.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button type="button" class="btn btn-danger" (click)="deleteGroup()">
+                {{ 'confirm' | translate }}
+              </button> 
+            </div>
+          </div>
+        </div>
+      </modal>
+
+    </div>
+
+  </div>
+</div>

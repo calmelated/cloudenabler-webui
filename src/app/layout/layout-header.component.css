@@ -1,0 +1,63 @@
+/* 訊息視窗CSS */
+.show_message_box{
+	position: relative;
+	background-color: #ecf0f5;
+}
+
+.show_message{
+	height: 0px;
+	width: 100%;
+	transition: all 2s;
+	line-height: 50px;
+	text-align: center;
+}
+
+.show{
+	height: 50px;
+}
+
+.callout-box{
+	height: 80px;
+	background-color: #ecf0f5;
+	text-align: center;
+	border: 0px;
+	padding-right: 15px !important;
+	padding-left: 15px !important;
+	padding-top: 15px !important;
+	display: none;
+}
+
+.callout-show{
+	display: block;
+}
+
+.navbar-title{
+	float:left;
+	color:#fff;
+	padding:8px 0px;
+	font-size:24px;
+}
+
+.user-account, .user-company {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (min-width: 768px){
+	.callout-box{
+		padding-right: 25px !important;
+		padding-left: 25px !important;
+	}
+
+	.callout-show{
+		height: 80px;
+		padding-top: 25px !important;
+	}
+}
+
+@media (max-width: 360px){
+	.navbar-title{
+		padding:12px 0px;
+		font-size:18px;
+	}
+}

@@ -1,0 +1,166 @@
+<modal-dialog [openModalDialog]="openModalDialog" (evtClose)="onDialogClose($event);"></modal-dialog>
+<div class="skin-blue sidebar-mini" [class.sidebar-collapse]="header['collspse']" [class.sidebar-open]="header['collspse']">
+  <div id="wrapper" class="wrapper" style="height:100vh;overflow:auto;">
+    <layout-header [header]="header" (slvdevList)="onSlvDevList($event);"></layout-header>
+
+    <div class="content-wrapper">
+      <section class="content">
+        <div class="box box-primary">
+          <div class="row title">
+            <div class="col-xs-2 col-md-2">
+              <h4></h4>
+            </div>
+            <div class="col-xs-7 col-md-8">
+              <h4>
+                <div class="row">
+                  <div class="col-md-6">
+                    {{ 'slave_device' | translate }}
+                  </div>
+                  <div class="col-md-6">
+                    {{ 'connect_type' | translate }}
+                  </div>
+                </div>
+              </h4>
+            </div>
+            <div class="col-xs-3 col-md-2">
+            </div>
+          </div>
+
+          <div *ngFor="let slvdev of slvdevList">
+            <div class="row row-content">
+              <div class="col-xs-2 col-md-2" [routerLink]="slvdev['editUrl']">
+                <img [src]="slvdev.icon">
+              </div>
+              <div class="col-xs-7 col-md-8" [routerLink]="slvdev['editUrl']">
+                <div class="row row-line">
+                  <div class="col-md-6 log-message">
+                    {{ slvdev['name'] }}
+                  </div>
+                  <div class="col-md-6">
+                    {{ slvdev['info'] }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-3 col-md-2" style="line-height: 48px;">
+                <div class="dropdown">    
+                  <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    {{ 'edit' | translate }}
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li *ngIf="slvdev['editUrl']">
+                      <a [routerLink]="slvdev['editUrl']"> 
+                        <span class="glyphicon glyphicon-list-alt"></span> 
+                        <span>{{ 'edit_slave_device' | translate }}</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a (click)="openModalRemove(slvdev);">
+                        <span class="glyphicon glyphicon-trash"></span> 
+                        <span>
+                          {{ 'remove' | translate }}
+                        </span>
+                      </a>
+                    </li>     
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>    
+      </section>
+
+      <!-- slave add POPUP視窗 -->
+      <modal #modalAddSlave name="modalAddSlave" cssClass="modal_with" [animation]="false" [keyboard]="false" [backdrop]="'static'">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>                  
+                {{ 'new_slave_device' | translate }}
+              </span>
+            </h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" (click)="modalAddSlave.close();">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group">
+              <label>
+                {{ 'device_name' | translate }}
+              </label>
+              <input type="text" [(ngModel)]="slave['name'].val" class="form-control"  autocomplete="off" maxlength="32">
+              <div class="text-danger" *ngIf="slave['name'].err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ slave['name'].err | translate }}</span>
+              </div>               
+            </div>
+            <div class="form-group">
+              <label>
+               {{ 'type' | translate }}
+              </label>
+              <select [(ngModel)]="slave['type'].val" class="form-control" (ngModelChange)="changeType($event)">
+                <option value="Serial">Serial</option>
+                <option value="TCP">TCP</option>
+              </select>
+            </div>
+            <div class="form-group" *ngIf="slave['type'].val === 'Serial'">
+              <label>
+                {{ 'serial_port' | translate }}
+              </label>
+              <select [(ngModel)]="slave['comPort'].val" class="form-control">
+                <option value="COM0">COM0</option>
+                <option value="COM1">COM1</option>
+              </select>
+            </div>
+            <div class="form-group" *ngIf="slave['type'].val === 'TCP'">
+              <label>
+                {{ 'slave_ip_hinet' | translate }}
+              </label>
+              <input type="text" [(ngModel)]="slave['ip'].val" class="form-control" autocomplete="off" maxlength="32">
+              <div class="text-danger" *ngIf="slave['ip'].err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ slave['ip'].err | translate }}</span>
+              </div>               
+            </div>
+            <div class="form-group" *ngIf="slave['type'].val === 'TCP'">
+              <label>
+                {{ 'slave_port_hint' | translate }}
+              </label>
+              <input type="text" [(ngModel)]="slave['port'].val" class="form-control"  autocomplete="off" maxlength="32">
+              <div class="text-danger" *ngIf="slave['port'].err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ slave['port'].err | translate }}
+                  <span *ngIf="slave['port'].errRange">({{ 'allow_range' | translate}}: {{ slave['port'].errRange }})</span>
+                </span>
+              </div>               
+            </div>
+            <div class="form-group">
+              <label>
+                {{ 'slave_id' | translate }}
+              </label>
+              <select [(ngModel)]="slave['slvId'].val"  class="form-control">
+                <option value="255" *ngIf="slave['type'].val === 'TCP'">None</option>
+                <option [value]="id" *ngFor="let id of slvIdList">{{ id }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <input type="checkbox" [(ngModel)]="slave['enable'].val" [checked]="slave['enable'].val">
+              {{ 'enable' | translate }}
+            </div>
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="modalAddSlave.close()">
+                {{ 'cancel' | translate }}
+              </button>
+              <button type="button" class="btn btn-primary" (click)="addNewSalve()">
+                {{ 'confirm' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </modal>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,96 @@
+<div class="skin-blue sidebar-mini" [class.sidebar-collapse]="header['collspse']" [class.sidebar-open]="header['collspse']">
+  <div id="wrapper" class="wrapper" style="height:100vh;overflow:auto;">
+    <layout-header [header]="header"></layout-header>
+
+    <div class="content-wrapper">
+      <section class="content">
+        <div class="box box-primary">
+
+          <div class="row title">
+            <div class="col-md-4">
+              <h4>
+              {{ 'session' | translate }}
+              </h4>
+            </div>
+            <div class="col-md-2">
+              <h4>
+                {{ 'company' | translate }}
+              </h4>
+            </div>
+            <div class="col-md-3">
+              <h4>
+                {{ 'account' | translate }}
+              </h4>
+            </div>
+            <div class="col-md-2">
+              <h4>
+                {{ 'expires' | translate }}
+              </h4>
+            </div>
+            <div class="col-md-1">
+            </div>            
+          </div>
+
+          <div class="row row-content break-all" *ngFor="let session of sessionList" (click)="openModalRemove(session.session)">
+            <div class="col-xs-3 col-md-4">
+              {{ session.session }}
+            </div>
+            <div class="col-xs-2 col-md-2">
+              {{ session.company }}
+            </div>
+            <div class="col-xs-3 col-md-3">
+              {{ session.account }}
+            </div>
+            <div class="col-xs-3 col-md-2">
+              {{ session.time }}
+            </div>
+            <div class="col-xs-1 col-md-1">
+              <img src="assets/img/ic_right_arrow.png">
+            </div>              
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 text-right">
+            <button (click)="openModalRemove('all')" class="btn btn-primary">
+            {{ 'clear_all' | translate }}
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- POPUP視窗 -->
+      <modal #ModalRemove name="ModalRemove" cssClass="modal_with" [animation]="false">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ 'caution' | translate }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" (click)="ModalRemove.close();">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group">
+              {{ 'make_sure_delete' | translate }}
+              ({{ 'session' | translate }}: <strong>{{ deleteId }}</strong>)    
+            </div>
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="ModalRemove.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button type="button" class="btn btn-danger" (click)="removeSession()">
+                {{ 'confirm' | translate }}
+              </button> 
+            </div>
+          </div>
+        </div>
+      </modal>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,385 @@
+<modal-dialog [openModalDialog]="openModalDialog" (evtClose)="onDialogClose($event);"></modal-dialog>
+<div class="skin-blue sidebar-mini" [class.sidebar-collapse]="header['collspse']" [class.sidebar-open]="header['collspse']">
+  <div id="wrapper" class="wrapper" style="height:100vh; overflow:auto;">
+    <layout-header [header]="header" (regList)="onRegList($event);"></layout-header>
+
+    <div class="content-wrapper">
+      <section class="content">
+        <div class="box box-primary">
+          <div class="row title">
+            <div class="col-xs-5 col-sm-6 col-md-7">
+              <div class="row user_row" style='margin: initial;'>
+                <div class="col-xs-6 col-sm-6 col-md-6">
+                  <h4>{{ 'name' | translate }}</h4>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6">
+                  <h4>{{ 'address' | translate }}/{{ 'logging' | translate }}</h4>
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-3 col-sm-3 col-md-2">
+              <h4>{{ 'value' | translate }}</h4>
+            </div>                  
+            <div class="ccol-xs-1 col-sm-1 col-md-1">
+              <h4></h4>
+            </div>
+            <div class="ccol-xs-2 col-sm-2 col-md-2">
+              <h4></h4>
+            </div>
+          </div>
+
+          <div class="row row-content" *ngFor="let register of registerList; let i = index;">
+            <div class="col-xs-5 col-sm-6 col-md-7" (click)="clickRegister(i)">
+              <div class="col-md-6 log-message">
+                {{ register.desc }}
+              </div>
+
+              <div class="col-md-6">
+                <span class="small hidden-md hidden-lg hidden-xl">
+                {{ 'register' | translate }}: {{ register.haddr }}
+                <span *ngIf="register.laddr">-{{ register.laddr }}</span>
+                </span>
+                <span class="hidden-xs hidden-sm">
+                {{ register.haddr }}<span *ngIf="register.laddr">-{{ register.laddr }}</span>
+                <span *ngIf="register.loggingStr">/ {{ register.loggingStr | translate }}</span>
+                </span>                  
+              </div>
+            </div>  
+
+            <!-- Value -->
+            <div class="col-xs-3 col-sm-3 col-md-2" (click)="clickRegister(i)">
+              <div *ngIf="register.valType === 'binary'">
+                <div class="div-hval" [innerHTML]="register.binaryString"> </div>
+              </div>
+              <div *ngIf="register.valType === 'alarm'">
+                  <span style="color: red;">{{ register.decimal }}</span>
+              </div>
+              <div *ngIf="register.valType === 'dtString'">
+                  <span [class.text-red]="register.redText === 1">
+                    {{ register.dtString | translate }}
+                  </span>
+              </div>                          
+              <div *ngIf="register.valType === 'normal' || register.valType === 'editor'">
+                <div class="div-hval">
+                  {{ register.decimal }}
+                  {{ register.unit }}
+                </div>
+              </div>
+            </div>          
+
+            <!-- ICON -->
+            <div class="col-xs-1 col-sm-1 col-md-1" (click)="clickRegister(i)">
+              <span *ngIf="register.appIcon === 'offline'" class='pull-left'>
+                <img [src]="register.image" style="width: 24px;">
+              </span>
+              <span *ngIf="register.appIcon === 'binary'" class='pull-left'>
+                <img [src]="register.image" style="width: 24px;">
+              </span>
+              <span *ngIf="register.appIcon === 'btn'" class='pull-left'>
+                <img [src]="register.image" style="width: 24px;">
+              </span>
+              <span *ngIf="register.appIcon === 'switch'" class='pull-left'>
+                <img [src]="register.image" style="width: 24px;">
+              </span> 
+              <span *ngIf="register.appIcon === 'iosw'" class='pull-left'>
+                <img [src]="register.image" style="width: 24px;">
+              </span>
+              <span *ngIf="register.appIcon === 'editor'" class='pull-left'>
+                <img [src]="register.image" style="width: 24px;">
+              </span>              
+              <span *ngIf="register.appIcon === 'chart'" class='pull-left'>
+                <img [src]="register.image" style="width: 24px;">
+              </span>                
+              <span *ngIf="register.appIcon === 'alarm'" class='pull-left'>
+                <img [src]="register.image" style="width: 24px;">
+              </span>               
+            </div>  
+
+            <!-- Edit Button -->
+            <div class="col-xs-2 col-sm-2 col-md-2">
+              <span class="btn-group" *ngIf="userAdmin !== '0'">   
+                <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    {{ 'edit' | translate }}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a routerLink="/devices/register/edit/{{ header.sn }}/{{ register.id }}">
+                      <span class="glyphicon glyphicon-list-alt"></span> 
+                      <span>
+                        {{ 'register' | translate }}
+                      </span>
+                    </a>
+                  </li>     
+                  <li>
+                    <a (click)="openModalRemove(i)">
+                      <span class="glyphicon glyphicon-trash"></span> 
+                      <span>
+                        {{ 'remove' | translate }}
+                      </span>
+                    </a>
+                  </li>              
+                </ul>
+              </span>
+            </div>              
+          </div>
+        </div>
+
+      </section>
+
+      <!-- 編輯欄位 POPUP視窗 -->
+      <modal #modalEdit name="modalEdit" cssClass="modal_with" [animation]="false">
+        <div class="box box-primary box-solid" *ngIf="curReg">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <img src="/assets/img/ic_editor.png" style="width:24px;">
+              <span>{{ curReg.desc }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" (click)="modalEdit.close();">
+              <i class="fa fa-times"></i>
+            </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group" *ngIf="curEditReg">
+              <input type="text" class="form-control" [(ngModel)]="curEditReg.val" [placeholder]="curEditReg.hint">
+              <label class="text-danger" *ngIf="curEditReg.err">
+                <span class="glyphicon glyphicon-alert"></span>
+                {{ 'range' | translate }}: {{ curEditReg.err | translate }}
+                <span *ngIf="curEditReg.errRange">({{ 'allow_range' | translate }}: {{ curEditReg.errRange }})</span>
+              </label> 
+            </div>
+            <div class="text-right">
+              <button type="button" class="btn btn-default" (click)="modalEdit.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button type="button" class="btn btn-primary" (click)="setRegVal()">
+                {{ 'confirm' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </modal>
+
+      <!-- 編輯欄位 POPUP視窗 -->
+      <modal #modalEditBinary name="modalEditBinary" cssClass="modal_with" [animation]="false">
+        <div class="box box-primary box-solid" *ngIf="curReg">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <img src="/assets/img/ic_editor.png" style="width:24px;">
+              <span>{{ curReg.desc }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" (click)="modalEditBinary.close();">
+              <i class="fa fa-times"></i>
+            </button>
+            </div>
+          </div>
+          <div class="box-body" *ngIf="curEditReg">
+            <div class="form-group">
+              <span>16 ~ 8</span><br>
+              <input type="checkbox" [(ngModel)]="curEditReg.val[0]" [checked]="curEditReg.val[0] === 1">
+              <input type="checkbox" [(ngModel)]="curEditReg.val[1]" [checked]="curEditReg.val[1] === 1">
+              <input type="checkbox" [(ngModel)]="curEditReg.val[2]" [checked]="curEditReg.val[2] === 1">
+              <input type="checkbox" [(ngModel)]="curEditReg.val[3]" [checked]="curEditReg.val[3] === 1">
+              <span>&nbsp;&nbsp;&nbsp;</span>
+              <input type="checkbox" [(ngModel)]="curEditReg.val[4]" [checked]="curEditReg.val[4] === 1">
+              <input type="checkbox" [(ngModel)]="curEditReg.val[5]" [checked]="curEditReg.val[5] === 1">
+              <input type="checkbox" [(ngModel)]="curEditReg.val[6]" [checked]="curEditReg.val[6] === 1">
+              <input type="checkbox" [(ngModel)]="curEditReg.val[7]" [checked]="curEditReg.val[7] === 1">
+              <br><span>7 ~ 1</span><br>
+              <input type="checkbox" [(ngModel)]="curEditReg.val[8]"  [checked]="curEditReg.val[8] === 1">
+              <input type="checkbox" [(ngModel)]="curEditReg.val[9]"  [checked]="curEditReg.val[9] === 1">
+              <input type="checkbox" [(ngModel)]="curEditReg.val[10]" [checked]="curEditReg.val[10] === 1">
+              <input type="checkbox" [(ngModel)]="curEditReg.val[11]" [checked]="curEditReg.val[11] === 1">
+              <span>&nbsp;&nbsp;&nbsp;</span>
+              <input type="checkbox" [(ngModel)]="curEditReg.val[12]" [checked]="curEditReg.val[12] === 1">
+              <input type="checkbox" [(ngModel)]="curEditReg.val[13]" [checked]="curEditReg.val[13] === 1">
+              <input type="checkbox" [(ngModel)]="curEditReg.val[14]" [checked]="curEditReg.val[14] === 1">
+              <input type="checkbox" [(ngModel)]="curEditReg.val[15]" [checked]="curEditReg.val[15] === 1"><br>
+            </div>
+            <div class="text-right">
+              <button type="button" class="btn btn-default" (click)="modalEditBinary.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button type="button" class="btn btn-primary" (click)="setBinaryRegVal()">
+                {{ 'send' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </modal>
+    </div>
+
+      <!-- 新增 Register -->
+      <modal #modalAddReg name="modalAddReg" cssClass="modal_with" [animation]="false" [keyboard]="false" [backdrop]="'static'">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ 'add' | translate }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" (click)="modalAddReg.close();">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+
+            <div class="form-group">
+              <!-- <label>{{ 'description_reg' | translate }}</label>  -->
+              <input type="text" name="desc" [(ngModel)]="addReg['desc'].val" class="form-control" maxlength="32" autocomplete="off" placeholder="{{ addReg['desc'].hint | translate }}">
+              <div class="text-danger" *ngIf="addReg['desc'].err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ addReg['desc'].err | translate }}</span>
+              </div>               
+            </div>
+
+            <div class="form-group">
+              <label>{{ addReg['type'].str | translate }}</label>
+              <select name="type" [(ngModel)]="addReg['type'].val"  class="form-control" (ngModelChange)="checkRegType()" >
+                <option *ngFor="let type of allRegTypes"  [value]="type.value">
+                  {{ type.name | translate }}
+                </option>
+              </select>
+              <div class="text-danger" *ngIf="addReg['type'].err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ addReg['type'].err | translate }}</span>
+              </div>                
+            </div>
+
+            <div class="form-group" *ngIf="addMstReg">
+              <label>{{ addReg['fc'].str | translate }}</label>
+              <select name="type" [(ngModel)]="addReg['fc'].val"  class="form-control">
+                <option *ngFor="let fc of fcList"  [value]="fc.value">
+                  {{ fc.name | translate }}
+                </option>
+              </select>
+              <div class="text-danger" *ngIf="addReg['type'].err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ addReg['type'].err | translate }}</span>
+              </div>                
+            </div>
+
+            <div class="form-group" style="display:table;width:100%;"> 
+              <label *ngIf="addRegBits === 16">{{ 'address' | translate }}</label>
+              <label *ngIf="addRegBits !== 16">{{ 'reg_address' | translate }}</label> : 
+              <div>
+                <div style="width:48%;float:left;">
+                  <select name="haddr" [(ngModel)]="addReg['haddr'].val" class="form-control" *ngIf="addSlvReg">
+                    <option *ngFor="let addr of addrList"  [value]="addr">{{ addr }}</option>
+                  </select>
+                  <input type="text" name="haddr" [(ngModel)]="addReg['haddr'].val" class="form-control" autocomplete="off" placeholder="{{ addReg['haddr'].hint | translate }}" *ngIf="addMstReg">
+                  <div class="text-danger" *ngIf="addReg['haddr'].err">
+                    <span class="glyphicon glyphicon-alert"></span>
+                    <span>{{ addReg['haddr'].err | translate }}</span>
+                    <span *ngIf="addReg['haddr'].errRange">({{ 'allow_range' | translate}}: {{ addReg['haddr'].errRange }})</span>
+                  </div>                    
+                </div>
+                <div style="width:4%;text-align:center;float:left;">
+                  <span *ngIf="addRegBits !== 16"> - </span>
+                </div>
+                <div style="width:48%;float:left;">
+                  <select name="laddr" [(ngModel)]="addReg['laddr'].val" class="form-control" *ngIf="addSlvReg && addRegBits !== 16">
+                    <option *ngFor="let addr of addrList"  [value]="addr">{{ addr }}</option>
+                  </select>
+                  <input type="text" name="laddr" [(ngModel)]="addReg['laddr'].val" class="form-control" autocomplete="off" placeholder="{{ addReg['laddr'].hint | translate }}" *ngIf="addMstReg && addRegBits !== 16">                  
+                  <div class="text-danger" *ngIf="addReg['laddr'].err">
+                    <span class="glyphicon glyphicon-alert"></span>
+                    <span>{{ addReg['laddr'].err | translate }}</span>
+                    <span *ngIf="addReg['laddr'].errRange">({{ 'allow_range' | translate}}: {{ addReg['laddr'].errRange }})</span>
+                  </div>                   
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" style="display:table;width:100%;" *ngIf="addFptReg">
+              <div style="width:48%;float:left;">
+                <label>{{ 'floating_points' | translate }}</label>
+                <select name="fpt" [(ngModel)]="addReg['fpt'].val" class="form-control">
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4" *ngIf="addRegBits !== 48">4</option>
+                </select>
+                <div class="text-danger" *ngIf="addReg['fpt'].err">
+                  <span class="glyphicon glyphicon-alert"></span>
+                  <span>{{ addReg['fpt'].err | translate }}</span>
+                  <span *ngIf="addReg['fpt'].errRange">({{ 'allow_range' | translate}}: {{ addReg['fpt'].errRange }})</span>
+                </div>   
+              </div>            
+            </div>            
+
+            <div class="form-group" style="display:table;width:100%;" *ngIf="addSwBtnReg">
+              <div style="width:48%;float:left;">
+                <div class="form-group">
+                  <label>{{ addReg['on'].str | translate }}</label>
+                  <input type="text" name="on" [(ngModel)]="addReg['on'].val" class="form-control" autocomplete="off" placeholder="{{ addReg['on'].hint | translate }}">
+                  <div class="text-danger" *ngIf="addReg['on'].err">
+                    <span class="glyphicon glyphicon-alert"></span>
+                    <span>{{ addReg['on'].err | translate }}</span>
+                    <span *ngIf="addReg['on'].errRange">({{ 'allow_range' | translate}}: {{ addReg['on'].errRange }})</span>
+                  </div> 
+                </div>            
+              </div>            
+              <div style="width:4%;float:center;"> </div>
+              <div style="width:48%;float:right;">
+                <div class="form-group">
+                  <label>{{ addReg['off'].str | translate }}</label>
+                  <input type="text" name="off" [(ngModel)]="addReg['off'].val" class="form-control" autocomplete="off" placeholder="{{ addReg['off'].hint | translate }}">
+                  <div class="text-danger" *ngIf="addReg['off'].err">
+                    <span class="glyphicon glyphicon-alert"></span>
+                    <span>{{ addReg['off'].err | translate }}</span>
+                    <span *ngIf="addReg['off'].errRange">({{ 'allow_range' | translate}}: {{ addReg['off'].errRange }})</span>
+                  </div> 
+                </div>               
+              </div>               
+            </div>               
+
+            <div class="form-group" *ngIf="addIOSWReg">
+              <label>{{ 'device' | translate }} </label>
+              <select name="swSN" [(ngModel)]="addReg['swSN'].val" class="form-control" (ngModelChange)="getRegisterList(addReg['swSN'].val, addReg['type'].val)">
+                <option [value]="i" *ngFor="let dev of ioswDevList; let i = index;">
+                  {{ dev['name'] }}
+                </option>
+              </select>
+              <div class="text-danger" *ngIf="addReg['swSN'].err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ addReg['swSN'].err | translate }}</span>
+              </div>               
+            </div>
+
+            <div class="form-group" *ngIf="addIOSWReg">
+              <label>{{ 'register' | translate }}</label>
+              <select name="swAddr" [(ngModel)]="addReg['swAddr'].val" class="form-control">
+                <option [value]="reg['addr']" *ngFor="let reg of ioswRegList">
+                  {{ reg['desc'] }} ({{ reg['addr'] }}) 
+                </option>
+              </select>
+              <div class="text-danger" *ngIf="addReg['swAddr'].err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ addReg['swAddr'].err | translate }}</span>
+              </div>            
+            </div>
+
+            <div class="form-group" >
+              <input type="checkbox" name="enlog" [(ngModel)]="addReg['enlog'].val"> 
+              {{ addReg['enlog'].str | translate }}
+            </div>
+
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="modalAddReg.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button type="button" class="btn btn-primary" (click)="saveRegister()">
+                {{ 'confirm' | translate }}
+              </button> 
+            </div>
+          </div>
+        </div>
+      </modal>
+
+  </div>
+</div>

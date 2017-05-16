@@ -1,0 +1,256 @@
+<modal-dialog [openModalDialog]="openModalDialog" (evtClose)="onDialogClose($event);"></modal-dialog>
+<div class="skin-blue sidebar-mini" [class.sidebar-collapse]="header['collspse']" [class.sidebar-open]="header['collspse']">
+  <div id="wrapper" class="wrapper" style="height:100vh;overflow:auto;">
+    <layout-header [header]="header"></layout-header>
+
+    <div class="content-wrapper" *ngIf="slvDev">
+      <section class="content">
+        <div class="box box-primary">
+          <div class="row title">
+            <div class="col-md-12">
+              <h4>{{ 'slave_config' | translate }}</h4>
+            </div>
+          </div>
+
+          <div class="row row-content break-all">
+            <div class="col-xs-10 col-md-11">
+              <div class="row break-all">
+                <div class="col-md-3">
+                  <strong>{{ editSlvDev['type'].str | translate }}</strong>
+                </div> 
+                <div class="col-md-9">
+                  {{ slvDev['type'] }}
+                </div>
+              </div>            
+            </div>            
+            <div class="col-xs-2 col-md-1">
+              <!-- <img src="assets/img/ic_right_arrow.png"> -->
+            </div>            
+          </div>
+
+          <div class="row row-content break-all" (click)="openModalEdit('name')">
+            <div class="col-xs-10 col-md-11">
+              <div class="row break-all">
+                <div class="col-md-3">
+                  <strong>{{ editSlvDev['name'].str | translate }}</strong>
+                </div> 
+                <div class="col-md-9">
+                  {{ slvDev['name'] }}
+                </div>
+              </div>            
+            </div>             
+            <div class="col-xs-2 col-md-1">
+              <img src="assets/img/ic_right_arrow.png">
+            </div>            
+          </div>          
+
+          <div class="row row-content break-all" (click)="openModalSelect('comPort')" *ngIf="slvDev['type'] === 'Serial'">
+            <div class="col-xs-10 col-md-11">
+              <div class="row break-all">
+                <div class="col-md-3">
+                  <strong>{{ editSlvDev['comPort'].str | translate }}</strong>
+                </div> 
+                <div class="col-md-9">
+                  {{ slvDev['comPort'] }}
+                </div>
+              </div>            
+            </div>             
+            <div class="col-xs-2 col-md-1">
+              <img src="assets/img/ic_right_arrow.png">
+            </div>            
+          </div>    
+
+          <div class="row row-content break-all" (click)="openModalEdit('ip')" *ngIf="slvDev['type'] === 'TCP'">
+            <div class="col-xs-10 col-md-11">
+              <div class="row break-all">
+                <div class="col-md-3">
+                  <strong>{{ editSlvDev['ip'].str | translate }}</strong>
+                </div> 
+                <div class="col-md-9">
+                  {{ slvDev['ip'] }}
+                </div>
+              </div>            
+            </div>             
+            <div class="col-xs-2 col-md-1">
+              <img src="assets/img/ic_right_arrow.png">
+            </div>            
+          </div>  
+
+          <div class="row row-content break-all" (click)="openModalEdit('port')" *ngIf="slvDev['type'] === 'TCP'">
+            <div class="col-xs-10 col-md-11">
+              <div class="row break-all">
+                <div class="col-md-3">
+                  <strong>{{ editSlvDev['port'].str | translate }}</strong>
+                </div> 
+                <div class="col-md-9">
+                  {{ slvDev['port'] }}
+                </div>
+              </div>            
+            </div>             
+            <div class="col-xs-2 col-md-1">
+              <img src="assets/img/ic_right_arrow.png">
+            </div>            
+          </div> 
+
+          <div class="row row-content break-all" (click)="openModalSelect('slvId')">
+            <div class="col-xs-10 col-md-11">
+              <div class="row break-all">
+                <div class="col-md-3">
+                  <strong>{{ editSlvDev['slvId'].str | translate }}</strong>
+                </div> 
+                <div class="col-md-9">
+                  {{ slvDev['slvId'] === 255 ? 'None' : slvDev['slvId'] }}
+                </div>
+              </div>            
+            </div>             
+            <div class="col-xs-2 col-md-1">
+              <img src="assets/img/ic_right_arrow.png">
+            </div>            
+          </div>           
+
+          <div class="row row-content break-all" (click)="sendEdit('enable')">
+            <div class="col-xs-10 col-md-11">
+              <div class="row break-all">
+                <div class="col-xs-10 col-md-3">
+                  <strong>{{ editSlvDev['enable'].str | translate }}</strong>
+                </div> 
+                <div class="hidden-xs hidden-sm col-md-9">
+                  <input type="checkbox" [(ngModel)]="slvDev['enable']" name="enable" [checked]="slvDev['enable'] === 1">
+                </div>
+              </div>            
+            </div>           
+            <div class="col-xs-2 hidden-md hidden-lg">
+              <input type="checkbox" [(ngModel)]="slvDev['enable']" name="enable" [checked]="slvDev['enable'] === 1">              
+            </div>            
+          </div>  
+
+        </div>
+
+        <div class="box box-primary">
+          <div class="row title">
+            <div class="col-md-12">
+              <h4>{{ 'other_settings' | translate }}</h4>
+            </div>
+          </div>
+
+          <div class="row row-content break-all" (click)="openModalEdit('delayPoll')">
+            <div class="col-xs-10 col-md-11">
+              <div class="row break-all">
+                <div class="col-md-3">
+                  <strong>{{ editSlvDev['delayPoll'].str | translate }}</strong>
+                </div> 
+                <div class="col-md-9">
+                  {{ slvDev['delayPoll'] }}
+                </div>
+              </div>            
+            </div>             
+            <div class="col-xs-2 col-md-1">
+              <img src="assets/img/ic_right_arrow.png">
+            </div>            
+          </div>  
+
+          <div class="row row-content break-all" (click)="openModalEdit('timeout')">
+            <div class="col-xs-10 col-md-11">
+              <div class="row break-all">
+                <div class="col-md-3">
+                  <strong>{{ editSlvDev['timeout'].str | translate }}</strong>
+                </div> 
+                <div class="col-md-9">
+                  {{ slvDev['timeout'] }}
+                </div>
+              </div>            
+            </div>             
+            <div class="col-xs-2 col-md-1">
+              <img src="assets/img/ic_right_arrow.png">
+            </div>            
+          </div>            
+
+          <div class="row row-content break-all" (click)="openModalEdit('maxRetry')">
+            <div class="col-xs-10 col-md-11">
+              <div class="row break-all">
+                <div class="col-md-3">
+                  <strong>{{ editSlvDev['maxRetry'].str | translate }}</strong>
+                </div> 
+                <div class="col-md-9">
+                  {{ slvDev['maxRetry'] }}
+                </div>
+              </div>            
+            </div>             
+            <div class="col-xs-2 col-md-1">
+              <img src="assets/img/ic_right_arrow.png">
+            </div>            
+          </div>  
+        </div>
+      </section>
+
+      <!-- Edit 視窗 -->
+      <modal #modalEdit name="modalEdit" cssClass="modal_with" [animation]="false">
+        <div class="box box-primary box-solid" *ngIf="curKey">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ 'edit' | translate }} - {{ editSlvDev[curKey].str | translate }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" (click)="modalEdit.close();">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group has-feedback">
+              <input type="text" name="editKey" [(ngModel)]="editSlvDev[curKey].val" class="form-control" autocomplete="off" maxlength="32" [placeholder]="editSlvDev[curKey].hint">
+              <span class="glyphicon glyphicon-pencil form-control-feedback"></span>
+              <label class="text-danger" *ngIf="editSlvDev[curKey].err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ editSlvDev[curKey].err | translate }} 
+                  <span *ngIf="editSlvDev[curKey].errRange">({{ 'allow_range' | translate}}: {{ editSlvDev[curKey].errRange }})</span>
+                </span>
+              </label>                
+            </div>             
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="modalEdit.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button type="button" class="btn btn-primary" (click)="saveConfigs()">
+                {{ 'confirm' | translate }}
+              </button> 
+            </div>
+          </div>
+        </div>
+      </modal>
+
+      <!-- Select 視窗 -->
+      <modal #modalSelect name="modalSelect" cssClass="modal_with" [animation]="false">
+        <div class="box box-primary box-solid" *ngIf="curKey">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ 'edit' | translate }} - {{ editSlvDev[curKey].str | translate }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" (click)="modalSelect.close();">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group has-feedback" *ngIf="curKey">
+              <select [(ngModel)]="editSlvDev[curKey].val" class="form-control">
+                <option value="255" *ngIf="slvDev['type'] === 'TCP'">None</option>
+                <option [value]="item" *ngFor="let item of selectList">{{ item }}</option>
+              </select>
+            </div>             
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="modalSelect.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button type="button" class="btn btn-primary" (click)="sendSelection()">
+                {{ 'confirm' | translate }}
+              </button> 
+            </div>
+          </div>
+        </div>
+      </modal>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+/*styles for home content only*/
+
+.login-box, .register-box {
+	margin:0px auto;
+	padding: 7% 0%;
+}
+
+.login-logo {
+	text-align: center;
+}
+
+.login-logo b {
+	font-size: 40px;
+}
+
+.gray-button {
+  background-color:#d2d6de;
+  border:0px;
+}

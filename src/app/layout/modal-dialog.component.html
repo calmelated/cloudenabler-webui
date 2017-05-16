@@ -1,0 +1,28 @@
+<modal #modalDialog name="modalDialog" cssClass="modal_with" [animation]="false">
+<div class="box box-primary box-solid">
+  <div class="box-header with-border">
+    <h3 class="box-title">
+      <span class="glyphicon glyphicon-alert" style="font-size:0.7em;"></span>
+      <span>{{ 'caution' | translate }}</span>
+    </h3>
+    <div class="box-tools pull-right">
+      <button type="button" class="btn btn-box-tool" (click)="modalDialog.close(false);">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+  </div>
+  <div class="box-body">
+    <div class="form-group">
+      <span *ngIf="modalDialogStr" [innerHtml]="modalDialogStr"></span>
+    </div>
+    <div class="ksmt-modal-footer">
+      <button type="button" class="btn btn-default" (click)="modalDialog.close();onClose(false);" *ngIf="yesNoFunc">
+        {{ 'cancel' | translate }}
+      </button>     
+      <button type="button" [class]="confirmClass" (click)="modalDialog.close();onClose(true);">
+        {{ 'confirm' | translate }}
+      </button> 
+    </div>
+  </div>
+</div>
+</modal>

@@ -1,0 +1,129 @@
+<div class="skin-blue sidebar-mini" [class.sidebar-collapse]="header['collspse']" [class.sidebar-open]="header['collspse']">
+  <div id="wrapper" class="wrapper" style="height:100vh;overflow:auto;">
+    <layout-header [header]="header"></layout-header>
+
+    <div class="content-wrapper">
+      <section class="content">
+        <!-- Configs -->
+        <div class="box box-primary">
+          <div class="row title">
+            <div class="col-md-12">
+              <h4>
+              <font face="verdana">Configurations</font>
+              </h4>
+            </div>
+          </div>
+          <div class="row row-content break-all" *ngFor="let ckey of configKeys" (click)="editCSID('config', ckey)">
+            <div class="col-xs-5 col-md-3">
+              <strong>{{ ckey }}</strong>
+            </div>
+            <div class="col-xs-6 col-md-8">
+              {{ configList[ckey] }}
+            </div>
+            <div class="col-xs-1 col-md-1">
+              <img src="assets/img/ic_right_arrow.png">
+            </div>             
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="box box-primary">
+          <div class="row title">
+            <div class="col-md-12">
+              <h4>
+                <font face="verdana">Status</font>
+              </h4>
+            </div>
+          </div>
+          <div class="row row-content break-all" *ngFor="let skey of statusKeys" (click)="editCSID('status', skey)">
+            <div class="col-xs-5 col-md-3">
+              <strong>{{ skey }}</strong>
+            </div>
+            <div class="col-xs-6 col-md-8">
+              {{ statusList[skey] }}
+            </div>
+            <div class="col-xs-1 col-md-1">
+              <img src="assets/img/ic_right_arrow.png">
+            </div>             
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 text-right">
+            <button (click)="openResetModal('config')" class="btn btn-primary">
+              {{ 'Reset configuration to default' | translate }}
+            </button>
+            <button (click)="openResetModal('status')" class="btn btn-primary">
+              {{ 'Reset status to default' | translate }}
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- 修改 POPUP視窗 -->
+      <modal #ModalEdit name="ModalEdit" cssClass="modal_with" [animation]="false">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ 'edit' | translate }} - {{ editKey }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" (click)="ModalEdit.close();">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group">
+              <input type="text" [(ngModel)]="editValue" class="form-control" autocomplete="off">
+            </div>
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="ModalEdit.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button type="button" class="btn btn-primary" (click)="sendCSID()">
+                {{ 'confirm' | translate }}
+              </button> 
+            </div>
+          </div>
+        </div>
+      </modal>
+
+      <!-- 警告 POPUP視窗 -->
+      <modal #resetModal name="resetModal" cssClass="modal_with" [animation]="false">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ 'caution' | translate }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" (click)="resetModal.close();">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group">
+              <span *ngIf="curType === 'config'">
+                {{ 'Are you sure to reset all configuration settings?' | translate }}
+              </span>
+              <span *ngIf="curType === 'status'">
+                {{ 'Are you sure to reset all status settings?' | translate }}
+              </span>
+            </div>
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="ModalEdit.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button type="button" class="btn btn-danger" (click)="resetAll()">
+                {{ 'confirm' | translate }}
+              </button> 
+            </div>
+          </div>
+        </div>
+      </modal>
+
+    </div>
+  </div>
+</div>

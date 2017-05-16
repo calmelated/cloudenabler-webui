@@ -1,0 +1,204 @@
+<modal-dialog [openModalDialog]="openModalDialog" (evtClose)="onDialogClose($event);"></modal-dialog>
+<div class="skin-blue sidebar-mini" [class.sidebar-collapse]="header['collspse']" [class.sidebar-open]="header['collspse']">
+  <div id="wrapper" class="wrapper" style="height:100vh;overflow:auto;">
+    <layout-header [header]="header" (subCompany)="onSubCompany($event);"></layout-header>
+    <div class="content-wrapper">
+    
+      <section class="content">
+        <div class="box box-primary">
+          <div class="row title">
+            <div class="col-xs-2 col-md-1">
+            </div>           
+            <div class="col-xs-7 col-md-8">
+              <h4>
+                <div class="row">
+                  <div class="col-md-6">
+                    {{ 'company' | translate }}
+                  </div>
+                  <div class="col-md-6">
+                    {{ 'ID' | translate }}
+                  </div>
+                </div>
+              </h4>
+            </div>
+            <div class="hidden-xs hidden-sm col-md-1" *ngIf="userAdmin === 2">
+              <h4>DB</h4>
+            </div>             
+            <div class="col-xs-3 col-md-2">
+            </div>
+          </div>
+
+          <div *ngFor="let company of companies;let i = index">
+            <div class="row row-content">
+              <div class="col-xs-2 col-md-1">
+                <img [src]="cmpIcon">
+              </div>
+              <div class="col-xs-7 col-md-8">
+                <div class="row row-line">
+                  <div class="col-md-6 log-message">
+                    {{ company.company }}
+                  </div>
+                  <div class="col-md-6">
+                    <span class="hidden-md hidden-lg">ID: </span>
+                    {{ company.id }}
+                  </div>
+                </div>
+              </div>
+              <div class="hidden-xs hidden-sm col-md-1" *ngIf="userAdmin === 2">
+                {{ company.dbsIdx }}
+              </div>
+              <div class="col-xs-3 col-md-2" style="line-height: 48px;">
+                <div class="dropdown">    
+                  <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    {{ 'edit' | translate }}
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a (click)="openModalLogin(i);">
+                        <span class="glyphicon glyphicon-list-alt"></span> 
+                        <span>{{ 'login' | translate }}</span>
+                      </a>
+                    </li>
+                    <li role="separator" class="divider"></li>        
+                    <li>
+                      <a (click)="openModalRemove(i);">
+                        <span class="glyphicon glyphicon-trash"></span> 
+                        <span>
+                          {{ 'remove' | translate }}
+                        </span>
+                      </a>
+                    </li>     
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>    
+      </section>
+
+      <!-- 登入子公司 POPUP視窗 -->
+      <modal #modalSubCompLogin name="modalSubCompLogin" cssClass="modal_with" [animation]="false">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ 'caution' | translate }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" (click)="modalSubCompLogin.close();">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group">
+                {{ 'make_sure_login' | translate }}
+                ({{ 'company' | translate }}: <strong>{{ curCompany }}</strong>)                              
+            </div>
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="modalSubCompLogin.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button type="button" class="btn btn-primary" (click)="loginSubCompany()">
+                {{ 'confirm' | translate }}
+              </button> 
+            </div>
+          </div>
+        </div>
+      </modal>
+
+      <!-- 警告 POPUP視窗 -->
+      <modal #modalRemove name="modalRemove" cssClass="modal_with" [animation]="false">
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ 'caution' | translate }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" (click)="modalRemove.close();">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group">
+                {{ 'make_sure_delete' | translate }}
+                ({{ 'company' | translate }}: <strong>{{ curCompany }}</strong>)                              
+            </div>
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="modalRemove.close()">
+                {{ 'cancel' | translate }}
+              </button> 
+              <button type="button" class="btn btn-danger" (click)="removeCompany()">
+                {{ 'confirm' | translate }}
+              </button> 
+            </div>
+          </div>
+        </div>
+      </modal>
+
+      <!-- 新增子公司 POPUP視窗 -->
+      <modal #modalAddSubCompany name="modalAddSubCompany" cssClass="modal_with" [animation]="false" [keyboard]="false" [backdrop]="'static'"> 
+        <div class="box box-primary box-solid">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              <span>{{ 'add' | translate }}</span>
+            </h3>
+            <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" (click)="modalAddSubCompany.close();">
+              <i class="fa fa-times"></i>
+            </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="form-group has-feedback">
+              <label>{{ 'company' | translate }}</label>
+              <input type="text" name="subcompany" [(ngModel)]="subCompany.company.val" class="form-control" maxlength="32">
+              <span class="glyphicon glyphicon-user form-control-feedback"></span>
+              <div class="text-danger" *ngIf="subCompany.company.err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ subCompany.company.err | translate }}</span>
+              </div>
+            </div>
+            <div class="form-group has-feedback">
+              <label>{{ 'account' | translate }}</label>              
+              <input type="text" name="subcompanyaccount" [(ngModel)]="subCompany.account.val" class="form-control" maxlength="32">
+              <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+              <div class="text-danger" *ngIf="subCompany.account.err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ subCompany.account.err | translate }}</span>
+              </div>                
+            </div>
+            <div class="form-group has-feedback">
+              <label>{{ 'password' | translate }}</label>
+              <input type="password" name="subcompanypassword" [(ngModel)]="subCompany.password.val" class="form-control" maxlength="32">
+              <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+              <div class="text-danger" *ngIf="subCompany.password.err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ subCompany.password.err | translate }}</span>
+              </div>                 
+            </div>
+            <div class="form-group has-feedback">
+              <label>{{ 'confirm_password' | translate }}</label>
+              <input type="password" name="confirmpassword1" [(ngModel)]="subCompany.confirm.val" class="form-control" maxlength="32">
+              <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+              <div class="text-danger" *ngIf="subCompany.confirm.err">
+                <span class="glyphicon glyphicon-alert"></span>
+                <span>{{ subCompany.confirm.err | translate }}</span>
+              </div>                  
+            </div>
+            <div class="ksmt-modal-footer">
+              <button type="button" class="btn btn-default" (click)="modalAddSubCompany.close()">
+                {{ 'cancel' | translate }}
+              </button>
+              <button type="button" class="btn btn-primary" (click)="saveSubCompany()">
+                {{ 'confirm' | translate }}
+              </button> 
+            </div>
+          </div>
+        </div>
+      </modal>
+
+    </div>
+  </div>
+</div>
