@@ -17,15 +17,15 @@ Supports
  - All website managements functions
  - Partical group functions (add, edit, remove, rename)  
  - Partical register functions
-  > upper-limit alarm
-  > lower-limit alarm
-  > apply math equation.
-  > 16 bits registers (interger, unsigned interger, fix-points integer)
-  > 32 bits registers (interger, unsigned interger, fix-points integer, IEEE 754)
-  > 48 bits registers (fix-points integer)
-  > 64 bits registers (fix-points integer)
-  > 16 bits M2M registers 
-  > 32 bits M2M registers 
+ -- upper-limit alarm
+ -- lower-limit alarm
+ -- apply math equation.
+ -- 16 bits registers (interger, unsigned interger, fix-points integer)
+ -- 32 bits registers (interger, unsigned interger, fix-points integer, IEEE 754)
+ -- 48 bits registers (fix-points integer)
+ -- 64 bits registers (fix-points integer)
+ -- 16 bits M2M registers 
+ -- 32 bits M2M registers 
 
 Not Supports
  - Register a new device
